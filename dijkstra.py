@@ -22,7 +22,7 @@ class Graph:
 		self.edge_num+=1
 
 
-	def add_vertex(self, node_data):
+	def add_node(self, node_data):
 
 		self.nodes.append(Node(self.node_num, node_data))
 
@@ -126,7 +126,7 @@ def main():
 
 	node_cnt = int(input('enter no of nodes: '))
 	for x in range(node_cnt):
-		graph.add_vertex(math.inf)
+		graph.add_node(math.inf)
 
 	edge = int(input('Enter no of edges: '))
 

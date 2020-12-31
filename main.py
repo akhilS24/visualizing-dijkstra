@@ -2,6 +2,9 @@
 
 import pygame as pg
 import func
+from graph import *
+import math
+
 
 pg.init()
 
@@ -12,59 +15,15 @@ screen_width = 600
 
 
 
-class Graph:
-	def __init__(self, vertices, edges):
-		self.adj_matrix = []
-		self.vertices = []
-		self.edges = []
-		self.vertices_num = vertices
-		self.edge_num = edges
-
-		for i in range(self.vertices_num):
-			self.add_vertex()
-
-		
-
-	def add_edge(self, vertex1, vertex2):
-		self.edges.append([vertex1, vertex2])
-
-		self.adj_matrix[vertex1][vertex2] = 1
-		self.adj_matrix[vertex2][vertex1] = 1
-
-
-	def add_vertex(self):
-		if self.vertices == []:
-			self.vertices.append(0)
-		else:
-			self.vertices.append(len(self.vertices))
-
-		for each in self.adj_matrix:
-			each.append(0)
-
-		new_list = []
-		for i in range(len(self.vertices)):
-			new_list.append(0)
-		self.adj_matrix.append(new_list)
-
-
-
-	def print_graph(self):
-		for each in self.adj_matrix:
-			print(f'{each}\n')
-
-
-
-
-
 class Grid:
 	def __init__(self, graph):
 	
 		self.graph = graph
-		self.order = func.find_min_order(self.graph.vertices_num)
+		self.order = func.find_min_order(self.graph.node_num)
 		self.cell_width = round(screen_width/(self.order))
 		self.cell_height = round(screen_height/(self.order))
 		self.nodes = []
-		self.node_count = self.graph.vertices_num
+		self.node_count = self.graph.node_num
 		self.edges = []
 		self.edge_count = self.graph.edge_num
 		self.grid_coordinates = func.create_grid_coordinates(self.order)
@@ -73,11 +32,11 @@ class Grid:
 		
 		for i in range(self.node_count):
 			coordinate = func.get_cordinate(self.grid_coordinates)
-			self.nodes.append(Node(round(self.cell_width/4), (round(((2*coordinate[1]+1)/2)*self.cell_width), round(((2*coordinate[0]+1)/2)*self.cell_height)), (0, 255, 0), i))
+			self.nodes.append(Node_(self.graph.nodes[i] ,round(self.cell_width/4), (round(((2*coordinate[1]+1)/2)*self.cell_width), round(((2*coordinate[0]+1)/2)*self.cell_height)), (0, 255, 0), i))
 
 		for i in range(self.edge_count):
-			edge = graph.edges[i]
-			self.edges.append(Edge(self.nodes[edge[0]].position, self.nodes[edge[1]].position, [(255, 255, 255), (255, 0, 0)], round(self.cell_width*(3/16))))
+			edge = self.graph.edges[i]
+			self.edges.append(Edge_(self.graph.edges[i], self.nodes[edge.start_node.node_index].position, self.nodes[edge.end_node.node_index].position, [(255, 255, 255), (255, 0, 0)], round(self.cell_width*(3/16))))
 
 
 	def draw(self, window):
@@ -96,9 +55,10 @@ class Grid:
 
 
 
-class Node:
-	def __init__(self, radius, position, color, index):
+class Node_:
+	def __init__(self, node, radius, position, color, index):
 		self.radius = radius
+		self.node = node
 		self.position = position
 		self.color = color
 		self.index = index
@@ -114,9 +74,10 @@ class Node:
 
 
 
-class Edge:
-	def __init__(self, start, stop, color, radius):
+class Edge_:
+	def __init__(self, edge, start, stop, color, radius):
 		self.radius = radius
+		self.edge = edge
 		self.start_coordinate = start
 		self.stop_coordinate = stop
 		self.color = color
@@ -130,26 +91,26 @@ class Edge:
 
 def main():
 
-	#getting the input
-	vertices = int(input('enter the no of vertices: '))
-	edges = int(input('enter the no of edges: '))
+	graph = Graph()
 
-	graph = Graph(vertices, edges)
+	node_cnt = int(input('enter no of nodes: '))
+	for x in range(node_cnt):
+		graph.add_node(math.inf)
 
-	for i in range(edges):
-		a, b = input('enter values').split(sep=' ')
-		a = int(a)
-		b = int(b)
+	edge = int(input('Enter no of edges: '))
 
-		assert(a<vertices and b<vertices)
-
-		graph.add_edge(a, b)
-
-	graph.print_graph()
-
+	with open('data.txt', mode="r") as f: 
+		for each_line in f:
+			data_list = each_line.split(' ')
+			for i in range(len(data_list)):
+				data_list[i] = int(data_list[i])
+			assert(data_list[0]<node_cnt and data_list[1]<node_cnt)
+			graph.add_edge(data_list[0], data_list[1], data_list[2])
 
 
-
+	graph.print_adj_matrix()
+	graph.print_all_edges()
+	graph.print_all_nodes()
 
 	confirmation = input('Open pygame window?')
 
