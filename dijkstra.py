@@ -2,24 +2,23 @@ import math
 from graph import *
 
 #DIJKSTRA ALGO
-def dijkstra(graph, root_index, spt_set, node_list):
+def dijkstra(grid, root, spt_set, node_list):
 	
 
-	for node in graph.nodes:
+	for node in grid.nodes:
 		node_list.append(node)
 
-	root = graph.nodes[root_index]
-	root.node_dist = 0
+	root.node.node_dist = 0
 
 	spt_set.append(root)
 	node_list.remove(root)
-	update_neighbours(graph, root)
+	update_neighbours(grid.graph, root.node)
 
 	while len(node_list)!=0:
 		u = select_min_dist_node(node_list)
 		spt_set.append(u)
 		node_list.remove(u)
-		update_neighbours(graph, u)
+		update_neighbours(grid.graph, u.node)
 
 #this function will update the adjacent nodes of node 'u'
 def update_neighbours(graph, u):
@@ -38,7 +37,7 @@ def update_neighbours(graph, u):
 def select_min_dist_node(node_list):
 	min_val_node = node_list[0]
 	for i in range(1, len(node_list)):
-		if min_val_node.node_dist > node_list[i].node_dist:
+		if min_val_node.node.node_dist > node_list[i].node.node_dist:
 			min_val_node = node_list[i]
 
 	return min_val_node

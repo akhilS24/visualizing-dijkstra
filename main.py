@@ -4,6 +4,8 @@ import pygame as pg
 import func
 from graph import *
 import math
+import threading
+from dijkstra import *
 
 
 pg.init()
@@ -68,12 +70,12 @@ class Node_:
 		self.color = color
 		self.index = index
 		self.fontColor = (0, 0, 255)
-		self.Font1 = pg.font.SysFont('impact', self.radius)
+		self.Font = [pg.font.SysFont('impact', self.radius), pg.font.SysFont('arial', round(self.radius/2), italic=True)]
 		self.is_source_dest = is_source_dest
 
 	def draw(self, window):
 		pg.draw.circle(window, self.color, self.position, self.radius)
-		txt1 = self.Font1.render(f'{self.index}', True, self.fontColor)
+		txt1 = self.Font[0].render(f'{self.index}', True, self.fontColor)
 		window.blit(txt1, (self.position[0]-txt1.get_width()/2, self.position[1]-txt1.get_height()/2))
 
 		mouse_x, mouse_y = pg.mouse.get_pos()
@@ -82,6 +84,9 @@ class Node_:
 			self.color = (255, 255, 255)
 		else:
 			self.color = (0, 255, 0)
+
+		txt2 = self.Font[1].render(f'{self.node.node_dist}', True, (255, 255, 255))
+		window.blit(txt2, (self.position[0], self.position[1]-self.radius*(3/2)))
 
 	def make_source_dest(self):
 		self.is_source_dest = True
@@ -95,15 +100,22 @@ class Edge_:
 		self.edge = edge
 		self.start_coordinate = start
 		self.stop_coordinate = stop
+		self.Font1 = pg.font.SysFont('arial', round(self.radius/2), italic=True)
 		self.color = color
 	def draw(self, window):
 		pg.draw.circle(window, self.color[1], self.start_coordinate, self.radius, 3)
 		pg.draw.line(window, self.color[0], self.start_coordinate, self.stop_coordinate, 1)
 		pg.draw.circle(window, self.color[1], self.stop_coordinate, self.radius, 3)
+		txt = self.Font1.render(f'{self.edge.edge_weight}', True, (255, 255, 255))
+		window.blit(txt, ((self.start_coordinate[0]+self.stop_coordinate[0])/2, (self.start_coordinate[1]+self.stop_coordinate[1])/2))
 
+def draw_process(window, node_list, spt_set, grid):
+	for node in spt_set:
+		node.draw(window)
 
-def draw_process(window, node_list, spt_set):
-	
+	for edge in grid.edges:
+		edge.draw(window)
+
 
 
 def main():
@@ -131,6 +143,8 @@ def main():
 
 	confirmation = input('Open pygame window?')
 
+
+
 	#pygame window
 
 	if confirmation == 'y' or confirmation == 'Y':
@@ -141,10 +155,14 @@ def main():
 
 		_selected = False
 		run = True
-		source_dest = []
+		alg_start = False
 
+		source_dest = []
 		spt_set = []
 		node_list = []
+
+
+
 
 		while run:
 
@@ -152,22 +170,32 @@ def main():
 
 			for event in pg.event.get():
 				if event.type == pg.QUIT:
-					run = false 
+					run = False 
 					pg.quit()
 				
-				if event.type == pg.MOUSEBUTTONDOWN and not _selected:
-					active_node = grid.find_active_node()
-					if len(source_dest) < 2:
-						source_dest.append(active_node)
-						active_node.make_source_dest()
-					else:
-						_selected = True
+				if event.type == pg.MOUSEBUTTONDOWN:
+					if not _selected:
+						active_node = grid.find_active_node()
+						if len(source_dest) < 2:
+							source_dest.append(active_node)
+							active_node.make_source_dest()
+
+							if len(source_dest) == 2:
+								_selected = True
+							
+
+				if event.type == pg.KEYDOWN:
+					if event.key == pg.K_RETURN:
+						if _selected and not alg_start:
+							thread = threading.Thread(target=dijkstra, daemon=True, args = (grid, source_dest[0], spt_set, node_list))
+							thread.start()
+							alg_start = True
 
 
-			if _selected == False:
+			if not alg_start:
 				grid.draw(WINDOW)
-			else:
-				draw_process(WINDOW, node_list, spt_set)
+			if _selected and alg_start:
+				draw_process(WINDOW, node_list, spt_set, grid)
 
 			pg.display.update()
 
