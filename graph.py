@@ -45,16 +45,22 @@ class Graph:
 
 	#prints the adj matrix representation of the graph
 	def print_adj_matrix(self):
+		print('Adjacency Matrix Representation of graph ')
+		print(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 		for each in self.adj_matrix:
 			print(f'{each}')
 
 	#print all the nodes 
 	def print_all_nodes(self):
+		print('All nodes and associated data (distance from source to node) ')
+		print(' ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 		for node in self.nodes:
 			node.Print()
 
 	#print all the edges
 	def print_all_edges(self):
+		print('All edges and edge weights')
+		print(' ~~~~~~~~~~~~~~~~~~~~~~~')
 		for edge in self.edges:
 			edge.Print()
 
@@ -76,3 +82,14 @@ class Edge:
 
 	def Print(self):
 		print(f'edge connecting {self.start_node.node_index} and {self.end_node.node_index}; data: {self.edge_weight}')
+
+
+def print_graph(graph):
+
+	print('\n')
+	graph.print_adj_matrix()
+	print('\n')
+	graph.print_all_edges()
+	print('\n')
+	graph.print_all_nodes()
+	print('\n')

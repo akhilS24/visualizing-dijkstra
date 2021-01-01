@@ -20,6 +20,10 @@ def dijkstra(grid, root, spt_set, node_list):
 		node_list.remove(u)
 		update_neighbours(grid.graph, u.node)
 
+
+	print_graph(grid.graph)
+
+
 #this function will update the adjacent nodes of node 'u'
 def update_neighbours(graph, u):
 	for i in range(graph.node_num):
@@ -41,6 +45,9 @@ def select_min_dist_node(node_list):
 			min_val_node = node_list[i]
 
 	return min_val_node
+
+
+
 
 
 def main():

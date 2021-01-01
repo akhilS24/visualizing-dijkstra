@@ -14,7 +14,7 @@ pg.init()
 screen_height = 600
 screen_width = 600
 
-
+Global_Font = pg.font.SysFont('arial', 30)
 
 
 class Grid:
@@ -116,6 +116,18 @@ def draw_process(window, node_list, spt_set, grid):
 	for edge in grid.edges:
 		edge.draw(window)
 
+def draw_commands(window, source_dest):
+	if len(source_dest) == 0:
+		command = 'Choose source'
+	elif len(source_dest) == 1:
+		command = 'Choose destination'
+	elif len(source_dest) == 2:
+		command = 'Press Enter'
+
+	txt = Global_Font.render(command, True, (255, 255, 255))
+	window.blit(txt, (round((screen_width - txt.get_width())/2), screen_height - txt.get_height()))
+
+	
 
 
 def main():
@@ -128,18 +140,30 @@ def main():
 
 	edge = int(input('Enter no of edges: '))
 
-	with open('data.txt', mode="r") as f: 
-		for each_line in f:
-			data_list = each_line.split(' ')
-			for i in range(len(data_list)):
-				data_list[i] = int(data_list[i])
-			assert(data_list[0]<node_cnt and data_list[1]<node_cnt)
-			graph.add_edge(data_list[0], data_list[1], data_list[2])
+	# with open('data.txt', mode="r") as f: 
+	# 	for each_line in f:
+	# 		data_list = each_line.split(' ')
+	# 		for i in range(len(data_list)):
+	# 			data_list[i] = int(data_list[i])
+	# 		assert(data_list[0]<node_cnt and data_list[1]<node_cnt)
+	# 		graph.add_edge(data_list[0], data_list[1], data_list[2])
 
 
-	graph.print_adj_matrix()
-	graph.print_all_edges()
-	graph.print_all_nodes()
+	print('Node numbering starts from 0\n')
+
+	for x in range(edge):
+		
+		print(f'edge{x}: ')
+		print('~~~~~')
+		node_index1 = int(input(f'start_node: '))
+		node_index2 = int(input(f'end_node: '))
+		edge_weight = int(input(f'edge_weight: '))
+		print('')
+		assert(type(node_index1) == int and type(node_index2) == int and type(edge_weight) == int)
+		graph.add_edge(node_index1, node_index2, edge_weight)
+
+
+	print_graph(graph)
 
 	confirmation = input('Open pygame window?')
 
@@ -160,7 +184,6 @@ def main():
 		source_dest = []
 		spt_set = []
 		node_list = []
-
 
 
 
@@ -194,6 +217,7 @@ def main():
 
 			if not alg_start:
 				grid.draw(WINDOW)
+				draw_commands(WINDOW, source_dest)
 			if _selected and alg_start:
 				draw_process(WINDOW, node_list, spt_set, grid)
 
