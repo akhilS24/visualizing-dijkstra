@@ -50,45 +50,5 @@ def select_min_dist_node(node_list):
 
 
 
-def main():
-	graph = Graph()
-
-	node_cnt = int(input('enter no of nodes: '))
-	for x in range(node_cnt):
-		graph.add_node(math.inf)
-
-	edge = int(input('Enter no of edges: '))
-
-	with open('data.txt', mode="r") as f: 
-		for each_line in f:
-			data_list = each_line.split(' ')
-			for i in range(len(data_list)):
-				data_list[i] = int(data_list[i])
-			assert(data_list[0]<node_cnt and data_list[1]<node_cnt)
-			graph.add_edge(data_list[0], data_list[1], data_list[2])
-
-
-	graph.print_all_nodes()
-	graph.print_all_edges()
-	graph.print_adj_matrix()
-
-
-	source = int(input(f'enter the source: '))
-	assert(source<node_cnt)
-
-	dijkstra(graph, source)
-
-	graph.print_all_nodes()
-	graph.print_all_edges()
-	graph.print_adj_matrix()
-
-
-	
-
-
-if __name__ == "__main__":
-	main()
-
-
 
 		
