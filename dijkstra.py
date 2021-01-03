@@ -1,8 +1,9 @@
 import math
 from graph import *
+import time
 
 #DIJKSTRA ALGO
-def dijkstra(grid, root, spt_set, node_list):
+def dijkstra(grid, root, spt_set, node_list, edge_list):
 	
 
 	for node in grid.nodes:
@@ -14,11 +15,16 @@ def dijkstra(grid, root, spt_set, node_list):
 	node_list.remove(root)
 	update_neighbours(grid.graph, root.node)
 
+	time.sleep(1)
+
 	while len(node_list)!=0:
 		u = select_min_dist_node(node_list)
 		spt_set.append(u)
 		node_list.remove(u)
+		add_edges(grid, spt_set, edge_list, u)
 		update_neighbours(grid.graph, u.node)
+
+		time.sleep(1)
 
 
 	print_graph(grid.graph)
@@ -48,6 +54,11 @@ def select_min_dist_node(node_list):
 
 
 
+def add_edges(grid, spt_set, edge_list, u):
+	for node_ in spt_set:
+		for edge_ in grid.edges:
+			if (edge_.edge.start_node == u.node and edge_.edge.end_node == node_.node) or (edge_.edge.start_node == node_.node and edge_.edge.end_node == u.node):
+				edge_list.append(edge_)
 
 
 

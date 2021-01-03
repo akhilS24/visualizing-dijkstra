@@ -11,8 +11,10 @@ from dijkstra import *
 pg.init()
 
 
-screen_height = 600
-screen_width = 600
+screen_height = 800
+screen_width = 800
+
+pg.display.set_caption('dijkstra')
 
 Global_Font = pg.font.SysFont('arial', 30)
 
@@ -109,12 +111,14 @@ class Edge_:
 		txt = self.Font1.render(f'{self.edge.edge_weight}', True, (255, 255, 255))
 		window.blit(txt, ((self.start_coordinate[0]+self.stop_coordinate[0])/2, (self.start_coordinate[1]+self.stop_coordinate[1])/2))
 
-def draw_process(window, node_list, spt_set, grid):
+def draw_process(window, node_list, spt_set, edge_list, grid):
 	for node in spt_set:
 		node.draw(window)
 
-	for edge in grid.edges:
+	for edge in edge_list:
 		edge.draw(window)
+
+
 
 def draw_commands(window, source_dest):
 	if len(source_dest) == 0:
@@ -170,7 +174,7 @@ def main():
 	source_dest = []
 	spt_set = []
 	node_list = []
-
+	edge_list = []
 
 
 	while run:
@@ -196,7 +200,7 @@ def main():
 			if event.type == pg.KEYDOWN:
 				if event.key == pg.K_RETURN:
 					if _selected and not alg_start:
-						thread = threading.Thread(target=dijkstra, daemon=True, args = (grid, source_dest[0], spt_set, node_list))
+						thread = threading.Thread(target=dijkstra, daemon=True, args = (grid, source_dest[0], spt_set, node_list, edge_list))
 						thread.start()
 						alg_start = True
 
@@ -205,7 +209,7 @@ def main():
 			grid.draw(WINDOW)
 			draw_commands(WINDOW, source_dest)
 		if _selected and alg_start:
-			draw_process(WINDOW, node_list, spt_set, grid)
+			draw_process(WINDOW, node_list, spt_set, edge_list, grid)
 
 		pg.display.update()
 

@@ -39,6 +39,7 @@ def main():
 	source_dest = []
 	spt_set = []
 	node_list = []
+	edge_list = []
 
 
 
@@ -65,7 +66,7 @@ def main():
 			if event.type == pg.KEYDOWN:
 				if event.key == pg.K_RETURN:
 					if _selected and not alg_start:
-						thread = threading.Thread(target=dijkstra, daemon=True, args = (grid, source_dest[0], spt_set, node_list))
+						thread = threading.Thread(target=dijkstra, daemon=True, args = (grid, source_dest[0], spt_set, node_list, edge_list))
 						thread.start()
 						alg_start = True
 
@@ -74,7 +75,7 @@ def main():
 			grid.draw(WINDOW)
 			draw_commands(WINDOW, source_dest)
 		if _selected and alg_start:
-			draw_process(WINDOW, node_list, spt_set, grid)
+			draw_process(WINDOW, node_list, spt_set, edge_list, grid)
 
 		pg.display.update()
 
